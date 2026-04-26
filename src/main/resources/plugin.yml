@@ -1,0 +1,18 @@
+name: StatsHolograms
+version: '${project.version}'
+main: com.statshologram.StatsHologramsPlugin
+api-version: '1.21'
+author: YourName
+description: Customizable hologram plugin for displaying player statistics
+
+commands:
+  hologram:
+    description: Main hologram command
+    usage: /hologram <deaths|kills|kd|killstreak|remove> [player]
+    aliases: [holo, hg]
+    permission: statsholograms.admin
+
+permissions:
+  statsholograms.admin:
+    description: Allows managing holograms
+    default: op
