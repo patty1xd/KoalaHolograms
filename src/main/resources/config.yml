@@ -1,0 +1,32 @@
+# StatsHolograms Configuration
+
+# Hologram Update Interval (in ticks, 20 ticks = 1 second)
+update-interval: 100
+
+# Hologram Theme Colors (Minecraft color codes)
+theme:
+  primary: "§5§l" # Dark Purple Bold
+  secondary: "§d" # Light Purple
+  accent: "§f" # White
+  player-color: "§e" # Gold
+  stat-color: "§b" # Aqua
+  
+# Hologram Titles
+titles:
+  deaths: "§5§l◆ TOP 10 DEATHS ◆"
+  kills: "§5§l◆ TOP 10 KILLS ◆"
+  kd: "§5§l◆ TOP 10 K/D RATIO ◆"
+  killstreak: "§5§l◆ TOP 10 KILLSTREAKS ◆"
+
+# Hologram Formatting
+formatting:
+  header-separator: "§5§m━━━━━━━━━━━━━━━━━━━━"
+  footer-separator: "§5§m━━━━━━━━━━━━━━━━━━━━"
+  player-prefix: "§d#{position} §f"
+  your-stats-prefix: "§5§l▸ §fYour "
+  
+# Line Spacing (space between hologram lines in blocks)
+line-spacing: 0.25
+
+# Top Player Count
+top-count: 10
