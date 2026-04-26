@@ -1,0 +1,120 @@
+# ═══════════════════════════════════════════════════════════
+#           StatsHolograms Configuration File
+# ═══════════════════════════════════════════════════════════
+#
+# This file allows you to customize the appearance and behavior
+# of your stats holograms. Changes require a reload or restart.
+#
+# Color Codes Reference:
+#   §0 Black      §1 Dark Blue    §2 Dark Green   §3 Dark Aqua
+#   §4 Dark Red   §5 Dark Purple  §6 Gold         §7 Gray
+#   §8 Dark Gray  §9 Blue         §a Green        §b Aqua
+#   §c Red        §d Light Purple §e Yellow       §f White
+#
+# Format Codes:
+#   §l Bold       §m Strikethrough §n Underline    §o Italic
+#
+# ═══════════════════════════════════════════════════════════
+
+# Hologram Update Interval
+# How often holograms refresh (in ticks)
+# 20 ticks = 1 second
+# 100 ticks = 5 seconds (default)
+# Higher values = less server load but slower updates
+update-interval: 100
+
+# ═══════════════════════════════════════════════════════════
+#                    Color Theme
+# ═══════════════════════════════════════════════════════════
+# Customize the colors used in your holograms
+# Mix color codes with format codes for unique styles!
+
+theme:
+  # Main header/title color (default: dark purple bold)
+  primary: "§5§l"
+  
+  # Secondary accent color (default: light purple)
+  secondary: "§d"
+  
+  # Accent/highlight color (default: white)
+  accent: "§f"
+  
+  # Player name color (default: gold)
+  player-color: "§e"
+  
+  # Stat value color (default: aqua)
+  stat-color: "§b"
+
+# ═══════════════════════════════════════════════════════════
+#                  Hologram Titles
+# ═══════════════════════════════════════════════════════════
+# Customize the title shown at the top of each hologram type
+
+titles:
+  deaths: "§5§l◆ TOP 10 DEATHS ◆"
+  kills: "§5§l◆ TOP 10 KILLS ◆"
+  kd: "§5§l◆ TOP 10 K/D RATIO ◆"
+  killstreak: "§5§l◆ TOP 10 KILLSTREAKS ◆"
+
+# ═══════════════════════════════════════════════════════════
+#                 Formatting Options
+# ═══════════════════════════════════════════════════════════
+
+formatting:
+  # Separator line shown below the title
+  header-separator: "§5§m━━━━━━━━━━━━━━━━━━━━"
+  
+  # Separator line shown above "Your stats"
+  footer-separator: "§5§m━━━━━━━━━━━━━━━━━━━━"
+  
+  # Prefix for each player in the leaderboard
+  # {position} will be replaced with the rank number (1-10)
+  player-prefix: "§d#{position} §f"
+  
+  # Prefix for the "Your stats" line
+  your-stats-prefix: "§5§l▸ §fYour "
+
+# ═══════════════════════════════════════════════════════════
+#                  Display Settings
+# ═══════════════════════════════════════════════════════════
+
+# Vertical space between hologram lines (in blocks)
+# 0.25 = tight spacing (default)
+# 0.30 = medium spacing
+# 0.35 = loose spacing
+line-spacing: 0.25
+
+# Number of top players to display in leaderboards
+# Default: 10
+# Recommended: 5-15
+top-count: 10
+
+# ═══════════════════════════════════════════════════════════
+#                    Example Themes
+# ═══════════════════════════════════════════════════════════
+#
+# Fire Theme (Red/Orange):
+#   primary: "§c§l"
+#   secondary: "§6"
+#   player-color: "§e"
+#   stat-color: "§c"
+#
+# Ocean Theme (Blue/Aqua):
+#   primary: "§9§l"
+#   secondary: "§b"
+#   player-color: "§f"
+#   stat-color: "§3"
+#
+# Emerald Theme (Green):
+#   primary: "§2§l"
+#   secondary: "§a"
+#   player-color: "§e"
+#   stat-color: "§2"
+#
+# Gold Theme:
+#   primary: "§6§l"
+#   secondary: "§e"
+#   player-color: "§f"
+#   stat-color: "§6"
+#
+# ═══════════════════════════════════════════════════════════
