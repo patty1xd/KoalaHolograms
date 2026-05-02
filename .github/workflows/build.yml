@@ -28,13 +28,13 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: StatsHolograms
-        path: target/StatsHolograms-*.jar
+        name: KoalaHolograms
+        path: target/KoalaHolograms-*.jar
         
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: target/StatsHolograms-*.jar
+        files: target/KoalaHolograms-*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
