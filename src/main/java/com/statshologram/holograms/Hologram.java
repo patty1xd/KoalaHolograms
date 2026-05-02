@@ -31,14 +31,27 @@ public class Hologram {
         Location lineLocation = location.clone().add(0, offset, 0);
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(lineLocation, EntityType.ARMOR_STAND);
         
+        // Core settings
         armorStand.setVisible(false);
         armorStand.setGravity(false);
+        armorStand.setInvulnerable(true);
+        armorStand.setMarker(true);
+        armorStand.setSmall(true);
+        armorStand.setBasePlate(false);
+        armorStand.setArms(false);
+        
+        // Custom name settings
         armorStand.setCustomNameVisible(true);
         armorStand.setCustomName(text);
-        armorStand.setMarker(true);
-        armorStand.setInvulnerable(true);
+        
+        // Additional settings
         armorStand.setCanPickupItems(false);
         armorStand.setPersistent(true);
+        armorStand.setRemoveWhenFarAway(false);
+        armorStand.setSilent(true);
+        
+        // Disable all interactions
+        armorStand.setCollidable(false);
         
         lines.add(armorStand);
     }
