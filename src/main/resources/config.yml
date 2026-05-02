@@ -1,32 +1,32 @@
-# StatsHolograms Configuration
+# KoalaHolograms Configuration
 
 # Hologram Update Interval (in ticks, 20 ticks = 1 second)
 update-interval: 100
 
-# Hologram Theme Colors (Minecraft color codes)
+# Hologram Theme Colors
 theme:
-  primary: "§d§l" # Light Purple Bold
-  secondary: "§5" # Dark Purple
+  primary: "§d§l" # Light Purple Bold (titles)
+  secondary: "§d" # Light Purple (separators)
   accent: "§f" # White
-  player-color: "§f" # White
-  stat-color: "§d" # Light Purple
-  rank-color: "§5" # Dark Purple for rank numbers
+  player-color: "§e" # Yellow/Gold (player names)
+  stat-color: "§6" # Gold (stats numbers)
+  rank-color: "§d" # Light Purple (rank numbers)
   
 # Hologram Titles
 titles:
-  deaths: "§d§l⚔ §5§lTOP DEATHS §d§l⚔"
-  kills: "§d§l⚔ §5§lTOP KILLS §d§l⚔"
-  kd: "§d§l⚔ §5§lTOP K/D §d§l⚔"
-  killstreak: "§d§l⚔ §5§lTOP STREAKS §d§l⚔"
+  deaths: "§d§l⚔ §f§lTOP DEATHS §d§l⚔"
+  kills: "§d§l⚔ §f§lTOP KILLS §d§l⚔"
+  kd: "§d§l⚔ §f§lTOP K/D §d§l⚔"
+  killstreak: "§d§l⚔ §f§lTOP STREAKS §d§l⚔"
 
 # Hologram Formatting
 formatting:
-  header-separator: "§5§m━━━━━━━━━━━━━━━━━━━━━━━━━"
-  footer-separator: "§5§m━━━━━━━━━━━━━━━━━━━━━━━━━"
-  player-prefix: "§5§l#§d{position} §7» §f"
-  your-stats-prefix: "§d§l» §fYour Stats§7: "
+  header-separator: "§d§m━━━━━━━━━━━━━━━━━━━━━━━━━"
+  footer-separator: "§d§m━━━━━━━━━━━━━━━━━━━━━━━━━"
+  player-prefix: "§d§l#§6{position} §7» §e"
+  your-stats-prefix: "§d§l» §fYour Stats§7: §6"
   
-# Line Spacing (space between hologram lines in blocks)
+# Line Spacing
 line-spacing: 0.28
 
 # Top Player Count
