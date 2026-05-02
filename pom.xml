@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.statshologram</groupId>
-    <artifactId>StatsHolograms</artifactId>
+    <groupId>com.koalahologram</groupId>
+    <artifactId>KoalaHolograms</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>StatsHolograms</name>
+    <name>KoalaHolograms</name>
     <description>Customizable hologram plugin for displaying player statistics</description>
 
     <properties>
