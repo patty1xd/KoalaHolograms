@@ -28,37 +28,42 @@ public class HologramManager {
     }
     
     private void loadHolograms() {
-        hologramsFile = new File(plugin.getDataFolder(), "holograms.yml");
-        if (!hologramsFile.exists()) {
-            try {
-                hologramsFile.createNewFile();
-            } catch (IOException e) {
-                plugin.getLogger().severe("Could not create holograms.yml!");
-                e.printStackTrace();
-            }
-        }
-        
-        hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
-        
-        // Load saved holograms
-        if (hologramsConfig.contains("holograms")) {
-            for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
-                String path = "holograms." + id;
-                String type = hologramsConfig.getString(path + ".type");
-                String worldName = hologramsConfig.getString(path + ".world");
-                double x = hologramsConfig.getDouble(path + ".x");
-                double y = hologramsConfig.getDouble(path + ".y");
-                double z = hologramsConfig.getDouble(path + ".z");
-                
-                org.bukkit.World world = plugin.getServer().getWorld(worldName);
-                if (world != null) {
-                    Location location = new Location(world, x, y, z);
-                    createHologram(id, type, location, null);
-                }
-            }
+    hologramsFile = new File(plugin.getDataFolder(), "holograms.yml");
+    if (!hologramsFile.exists()) {
+        try {
+            hologramsFile.createNewFile();
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not create holograms.yml!");
+            e.printStackTrace();
         }
     }
     
+    hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
+    
+    // Load saved holograms
+    if (hologramsConfig.contains("holograms")) {
+        for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
+            String path = "holograms." + id;
+            String type = hologramsConfig.getString(path + ".type");
+            String worldName = hologramsConfig.getString(path + ".world");
+            double x = hologramsConfig.getDouble(path + ".x");
+            double y = hologramsConfig.getDouble(path + ".y");
+            double z = hologramsConfig.getDouble(path + ".z");
+            
+            org.bukkit.World world = plugin.getServer().getWorld(worldName);
+            if (world != null) {
+                Location location = new Location(world, x, y, z);
+                // Kill any existing armor stands at this location first
+                world.getNearbyEntities(location, 3, 5, 3).forEach(entity -> {
+                    if (entity instanceof org.bukkit.entity.ArmorStand) {
+                        entity.remove();
+                    }
+                });
+                createHologram(id, type, location, null);
+            }
+        }
+    }
+}
     private void saveHolograms() {
         for (Map.Entry<String, Hologram> entry : holograms.entrySet()) {
             String id = entry.getKey();
