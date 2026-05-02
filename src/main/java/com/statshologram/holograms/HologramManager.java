@@ -109,7 +109,7 @@ public class HologramManager {
         hologram.clearLines();
         
         FileConfiguration config = plugin.getConfig();
-        double lineSpacing = config.getDouble("line-spacing", 0.25);
+        double lineSpacing = config.getDouble("line-spacing", 0.28);
         double currentOffset = 0;
         
         // Add title
@@ -118,24 +118,31 @@ public class HologramManager {
         currentOffset -= lineSpacing;
         
         // Add separator
-        String separator = config.getString("formatting.header-separator", "§5§m━━━━━━━━━━━━━━━━━━━━");
+        String separator = config.getString("formatting.header-separator", "§5§m━━━━━━━━━━━━━━━━━━━━━━━━━");
         hologram.addLine(separator, currentOffset);
         currentOffset -= lineSpacing;
         
+        // Add empty line for spacing
+        hologram.addLine("§7", currentOffset);
+        currentOffset -= lineSpacing * 0.7;
+        
         // Add top players
         List<PlayerStats> topPlayers = getTopPlayers(type, config.getInt("top-count", 10));
-        String playerPrefix = config.getString("formatting.player-prefix", "§d#{position} §f");
-        String playerColor = config.getString("theme.player-color", "§e");
-        String statColor = config.getString("theme.stat-color", "§b");
+        String playerPrefix = config.getString("formatting.player-prefix", "§5§l#§d{position} §7» §f");
+        String playerColor = config.getString("theme.player-color", "§f");
+        String statColor = config.getString("theme.stat-color", "§d");
         
         for (int i = 0; i < topPlayers.size(); i++) {
             PlayerStats stats = topPlayers.get(i);
-            String line = playerPrefix.replace("{position}", String.valueOf(i + 1)) +
-                    playerColor + stats.getPlayerName() + " §7- " +
-                    statColor + getStatValue(stats, type);
+            String prefix = playerPrefix.replace("{position}", String.valueOf(i + 1));
+            String line = prefix + playerColor + stats.getPlayerName() + " §8- " + statColor + getStatValue(stats, type);
             hologram.addLine(line, currentOffset);
             currentOffset -= lineSpacing;
         }
+        
+        // Add empty line for spacing
+        hologram.addLine("§7", currentOffset);
+        currentOffset -= lineSpacing * 0.7;
         
         // Add footer separator
         hologram.addLine(separator, currentOffset);
@@ -144,9 +151,8 @@ public class HologramManager {
         // Add "Your stats" line if targetPlayer is specified
         if (targetPlayer != null) {
             PlayerStats playerStats = plugin.getStatsManager().getPlayerStats(targetPlayer);
-            String yourStatsPrefix = config.getString("formatting.your-stats-prefix", "§5§l▸ §fYour ");
-            String statName = getStatName(type);
-            String yourLine = yourStatsPrefix + statName + ": " + statColor + getStatValue(playerStats, type);
+            String yourStatsPrefix = config.getString("formatting.your-stats-prefix", "§d§l» §fYour Stats§7: ");
+            String yourLine = yourStatsPrefix + statColor + getStatValue(playerStats, type);
             hologram.addLine(yourLine, currentOffset);
         }
     }
