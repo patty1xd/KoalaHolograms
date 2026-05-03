@@ -43,7 +43,6 @@ public class HologramManager {
     }
     hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
     // Don't load here - will load delayed from plugin
-}
     
     // Load saved holograms
     if (hologramsConfig.contains("holograms")) {
