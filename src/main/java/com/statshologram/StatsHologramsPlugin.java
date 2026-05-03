@@ -13,30 +13,37 @@ public class StatsHologramsPlugin extends JavaPlugin {
     private HologramManager hologramManager;
     
     @Override
-    public void onEnable() {
-        instance = this;
-        
-        // Save default configuration
-        saveDefaultConfig();
-        
-        // Initialize managers
-        statsManager = new PlayerStatsManager(this);
-        hologramManager = new HologramManager(this);
-        
-        // Register commands
-        getCommand("hologram").setExecutor(new HologramCommand(this));
-        
-        // Register listeners
-        getServer().getPluginManager().registerEvents(new PlayerStatsListener(this), this);
-        
-        // Start hologram update task
-        int updateInterval = getConfig().getInt("update-interval", 100);
-        getServer().getScheduler().runTaskTimer(this, () -> {
-            hologramManager.updateAllHolograms();
-        }, 20L, updateInterval);
-        
-        getLogger().info("StatsHolograms has been enabled!");
-    }
+    @Override
+public void onEnable() {
+    instance = this;
+    
+    // Save default configuration
+    saveDefaultConfig();
+    
+    // Initialize managers
+    statsManager = new PlayerStatsManager(this);
+    hologramManager = new HologramManager(this);
+    
+    // Clear any leftover armor stands from previous session
+    getServer().getScheduler().runTaskLater(this, () -> {
+        hologramManager.clearLeftoverArmorStands();
+        hologramManager.loadHologramsDelayed();
+    }, 20L); // Wait 1 second for worlds to load
+    
+    // Register commands
+    getCommand("hologram").setExecutor(new HologramCommand(this));
+    
+    // Register listeners
+    getServer().getPluginManager().registerEvents(new PlayerStatsListener(this), this);
+    
+    // Start hologram update task
+    int updateInterval = getConfig().getInt("update-interval", 100);
+    getServer().getScheduler().runTaskTimer(this, () -> {
+        hologramManager.updateAllHolograms();
+    }, 20L, updateInterval);
+    
+    getLogger().info("KoalaHolograms has been enabled!");
+}
     
    @Override
 public void onDisable() {
