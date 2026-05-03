@@ -53,17 +53,14 @@ public class HologramManager {
             org.bukkit.World world = plugin.getServer().getWorld(worldName);
             if (world != null) {
                 Location location = new Location(world, x, y, z);
-                // Kill any existing armor stands at this location first
-                world.getNearbyEntities(location, 3, 5, 3).forEach(entity -> {
-                    if (entity instanceof org.bukkit.entity.ArmorStand) {
-                        entity.remove();
-                    }
-                });
-                createHologram(id, type, location, null);
+                Hologram hologram = new Hologram(id, location);
+                holograms.put(id, hologram);
+                updateHologram(id, type, null);
             }
         }
     }
 }
+    
     private void saveHolograms() {
         for (Map.Entry<String, Hologram> entry : holograms.entrySet()) {
             String id = entry.getKey();
