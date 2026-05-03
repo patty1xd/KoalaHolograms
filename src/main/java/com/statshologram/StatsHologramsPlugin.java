@@ -38,20 +38,20 @@ public class StatsHologramsPlugin extends JavaPlugin {
         getLogger().info("StatsHolograms has been enabled!");
     }
     
-    @Override
-    public void onDisable() {
-        // Remove all holograms
-        if (hologramManager != null) {
-            hologramManager.removeAllHolograms();
-        }
-        
-        // Save stats data
-        if (statsManager != null) {
-            statsManager.saveData();
-        }
-        
-        getLogger().info("StatsHolograms has been disabled!");
+   @Override
+public void onDisable() {
+    // DON'T remove holograms - let them persist
+    // if (hologramManager != null) {
+    //     hologramManager.removeAllHolograms();
+    // }
+    
+    // Save stats data
+    if (statsManager != null) {
+        statsManager.saveData();
     }
+    
+    getLogger().info("KoalaHolograms has been disabled!");
+}
     
     public static StatsHologramsPlugin getInstance() {
         return instance;
