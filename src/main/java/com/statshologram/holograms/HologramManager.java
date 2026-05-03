@@ -94,18 +94,26 @@ public class HologramManager {
         return "unknown";
     }
     
-    public void createHologram(String id, String type, Location location, Player targetPlayer) {
-        // Remove existing hologram if it exists
-        if (holograms.containsKey(id)) {
-            holograms.get(id).remove();
-        }
-        
-        Hologram hologram = new Hologram(id, location);
-        holograms.put(id, hologram);
-        
-        updateHologram(id, type, targetPlayer);
-        saveHolograms();
+public void createHologram(String id, String type, Location location, Player targetPlayer) {
+    // Remove existing hologram if it exists
+    if (holograms.containsKey(id)) {
+        holograms.get(id).remove();
+        holograms.remove(id);
     }
+    
+    // Clear any armor stands at this location
+    location.getWorld().getNearbyEntities(location, 3, 5, 3).forEach(entity -> {
+        if (entity instanceof org.bukkit.entity.ArmorStand) {
+            entity.remove();
+        }
+    });
+    
+    Hologram hologram = new Hologram(id, location);
+    holograms.put(id, hologram);
+    
+    updateHologram(id, type, targetPlayer);
+    saveHolograms();
+}
     
     private void updateHologram(String id, String type, Player targetPlayer) {
         Hologram hologram = holograms.get(id);
@@ -226,11 +234,19 @@ public class HologramManager {
     }
     
     public void removeAllHolograms() {
-        for (Hologram hologram : holograms.values()) {
-            hologram.remove();
-        }
-        holograms.clear();
+    for (Hologram hologram : holograms.values()) {
+        hologram.remove();
     }
+    holograms.clear();
+    
+    // Also clear the config
+    hologramsConfig.set("holograms", null);
+    try {
+        hologramsConfig.save(hologramsFile);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
     
     public Set<String> getHologramIds() {
         return new HashSet<>(holograms.keySet());
