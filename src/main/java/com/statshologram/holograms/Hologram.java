@@ -31,6 +31,10 @@ public class Hologram {
         Location lineLocation = location.clone().add(0, offset, 0);
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(lineLocation, EntityType.ARMOR_STAND);
         
+        // TAG IT as our hologram
+        armorStand.setMetadata("KoalaHologram", new org.bukkit.metadata.FixedMetadataValue(
+            org.bukkit.Bukkit.getPluginManager().getPlugin("KoalaHolograms"), true));
+        
         // Core settings
         armorStand.setVisible(false);
         armorStand.setGravity(false);
@@ -46,7 +50,7 @@ public class Hologram {
         
         // Additional settings
         armorStand.setCanPickupItems(false);
-        armorStand.setPersistent(true);
+        armorStand.setPersistent(false); // DON'T save to world file
         armorStand.setRemoveWhenFarAway(false);
         armorStand.setSilent(true);
         
