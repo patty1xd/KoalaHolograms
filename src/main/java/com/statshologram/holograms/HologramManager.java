@@ -38,13 +38,13 @@ public class HologramManager {
     }
     
     public void clearLeftoverArmorStands() {
-        // Clear ALL invisible hologram armor stands across all worlds
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             world.getEntities().forEach(entity -> {
                 if (entity instanceof org.bukkit.entity.ArmorStand) {
                     org.bukkit.entity.ArmorStand stand = (org.bukkit.entity.ArmorStand) entity;
-                    // Only remove invisible marker armor stands (holograms)
-                    if (!stand.isVisible() && stand.isMarker() && stand.isCustomNameVisible()) {
+                    // Remove if it has our tag OR if it's an invisible marker with custom name (old ones)
+                    if (stand.hasMetadata("KoalaHologram") || 
+                        (!stand.isVisible() && stand.isMarker() && stand.isCustomNameVisible())) {
                         entity.remove();
                     }
                 }
@@ -104,7 +104,6 @@ public class HologramManager {
     }
     
     public void createHologram(String id, String type, Location location, Player targetPlayer) {
-        // Remove existing hologram if it exists
         if (holograms.containsKey(id)) {
             holograms.get(id).remove();
             holograms.remove(id);
@@ -127,21 +126,17 @@ public class HologramManager {
         double lineSpacing = config.getDouble("line-spacing", 0.28);
         double currentOffset = 0;
         
-        // Add title
         String title = config.getString("titles." + type, "§d§l⚔ TOP 10 ⚔");
         hologram.addLine(title, currentOffset);
         currentOffset -= lineSpacing;
         
-        // Add separator
         String separator = config.getString("formatting.header-separator", "§d§m━━━━━━━━━━━━━━━━━━━━━━━━━");
         hologram.addLine(separator, currentOffset);
         currentOffset -= lineSpacing;
         
-        // Add empty line for spacing
         hologram.addLine("§7", currentOffset);
         currentOffset -= lineSpacing * 0.7;
         
-        // Add top players
         List<PlayerStats> topPlayers = getTopPlayers(type, config.getInt("top-count", 10));
         String playerPrefix = config.getString("formatting.player-prefix", "§d#§6{position} §7» §e");
         String playerColor = config.getString("theme.player-color", "§e");
@@ -155,15 +150,12 @@ public class HologramManager {
             currentOffset -= lineSpacing;
         }
         
-        // Add empty line for spacing
         hologram.addLine("§7", currentOffset);
         currentOffset -= lineSpacing * 0.7;
         
-        // Add footer separator
         hologram.addLine(separator, currentOffset);
         currentOffset -= lineSpacing;
         
-        // Add "Your stats" line if targetPlayer is specified
         if (targetPlayer != null) {
             PlayerStats playerStats = plugin.getStatsManager().getPlayerStats(targetPlayer);
             String yourStatsPrefix = config.getString("formatting.your-stats-prefix", "§d§l» §fYour Stats§7: §6");
