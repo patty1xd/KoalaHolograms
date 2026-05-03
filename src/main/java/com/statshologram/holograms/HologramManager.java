@@ -24,28 +24,37 @@ public class HologramManager {
         this.plugin = plugin;
         this.holograms = new HashMap<>();
         this.kdFormat = new DecimalFormat("#.##");
-        loadHolograms();
+        
+        hologramsFile = new File(plugin.getDataFolder(), "holograms.yml");
+        if (!hologramsFile.exists()) {
+            try {
+                hologramsFile.createNewFile();
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not create holograms.yml!");
+                e.printStackTrace();
+            }
+        }
+        hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
     }
     
-    public HologramManager(StatsHologramsPlugin plugin) {
-    this.plugin = plugin;
-    this.holograms = new HashMap<>();
-    this.kdFormat = new DecimalFormat("#.##");
-    
-    hologramsFile = new File(plugin.getDataFolder(), "holograms.yml");
-    if (!hologramsFile.exists()) {
-        try {
-            hologramsFile.createNewFile();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not create holograms.yml!");
-            e.printStackTrace();
+    public void clearLeftoverArmorStands() {
+        // Clear ALL invisible hologram armor stands across all worlds
+        for (org.bukkit.World world : plugin.getServer().getWorlds()) {
+            world.getEntities().forEach(entity -> {
+                if (entity instanceof org.bukkit.entity.ArmorStand) {
+                    org.bukkit.entity.ArmorStand stand = (org.bukkit.entity.ArmorStand) entity;
+                    // Only remove invisible marker armor stands (holograms)
+                    if (!stand.isVisible() && stand.isMarker() && stand.isCustomNameVisible()) {
+                        entity.remove();
+                    }
+                }
+            });
         }
     }
-    hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
-    // Don't load here - will load delayed from plugin
     
-    // Load saved holograms
-    if (hologramsConfig.contains("holograms")) {
+    public void loadHologramsDelayed() {
+        if (!hologramsConfig.contains("holograms")) return;
+        
         for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
             String path = "holograms." + id;
             String type = hologramsConfig.getString(path + ".type");
@@ -63,7 +72,6 @@ public class HologramManager {
             }
         }
     }
-}
     
     private void saveHolograms() {
         for (Map.Entry<String, Hologram> entry : holograms.entrySet()) {
@@ -95,26 +103,19 @@ public class HologramManager {
         return "unknown";
     }
     
-public void createHologram(String id, String type, Location location, Player targetPlayer) {
-    // Remove existing hologram if it exists
-    if (holograms.containsKey(id)) {
-        holograms.get(id).remove();
-        holograms.remove(id);
-    }
-    
-    // Clear any armor stands at this location
-    location.getWorld().getNearbyEntities(location, 3, 5, 3).forEach(entity -> {
-        if (entity instanceof org.bukkit.entity.ArmorStand) {
-            entity.remove();
+    public void createHologram(String id, String type, Location location, Player targetPlayer) {
+        // Remove existing hologram if it exists
+        if (holograms.containsKey(id)) {
+            holograms.get(id).remove();
+            holograms.remove(id);
         }
-    });
-    
-    Hologram hologram = new Hologram(id, location);
-    holograms.put(id, hologram);
-    
-    updateHologram(id, type, targetPlayer);
-    saveHolograms();
-}
+        
+        Hologram hologram = new Hologram(id, location);
+        holograms.put(id, hologram);
+        
+        updateHologram(id, type, targetPlayer);
+        saveHolograms();
+    }
     
     private void updateHologram(String id, String type, Player targetPlayer) {
         Hologram hologram = holograms.get(id);
@@ -127,12 +128,12 @@ public void createHologram(String id, String type, Location location, Player tar
         double currentOffset = 0;
         
         // Add title
-        String title = config.getString("titles." + type, "§5§l◆ TOP 10 ◆");
+        String title = config.getString("titles." + type, "§d§l⚔ TOP 10 ⚔");
         hologram.addLine(title, currentOffset);
         currentOffset -= lineSpacing;
         
         // Add separator
-        String separator = config.getString("formatting.header-separator", "§5§m━━━━━━━━━━━━━━━━━━━━━━━━━");
+        String separator = config.getString("formatting.header-separator", "§d§m━━━━━━━━━━━━━━━━━━━━━━━━━");
         hologram.addLine(separator, currentOffset);
         currentOffset -= lineSpacing;
         
@@ -142,9 +143,9 @@ public void createHologram(String id, String type, Location location, Player tar
         
         // Add top players
         List<PlayerStats> topPlayers = getTopPlayers(type, config.getInt("top-count", 10));
-        String playerPrefix = config.getString("formatting.player-prefix", "§5§l#§d{position} §7» §f");
-        String playerColor = config.getString("theme.player-color", "§f");
-        String statColor = config.getString("theme.stat-color", "§d");
+        String playerPrefix = config.getString("formatting.player-prefix", "§d#§6{position} §7» §e");
+        String playerColor = config.getString("theme.player-color", "§e");
+        String statColor = config.getString("theme.stat-color", "§6");
         
         for (int i = 0; i < topPlayers.size(); i++) {
             PlayerStats stats = topPlayers.get(i);
@@ -165,8 +166,8 @@ public void createHologram(String id, String type, Location location, Player tar
         // Add "Your stats" line if targetPlayer is specified
         if (targetPlayer != null) {
             PlayerStats playerStats = plugin.getStatsManager().getPlayerStats(targetPlayer);
-            String yourStatsPrefix = config.getString("formatting.your-stats-prefix", "§d§l» §fYour Stats§7: ");
-            String yourLine = yourStatsPrefix + statColor + getStatValue(playerStats, type);
+            String yourStatsPrefix = config.getString("formatting.your-stats-prefix", "§d§l» §fYour Stats§7: §6");
+            String yourLine = yourStatsPrefix + getStatValue(playerStats, type);
             hologram.addLine(yourLine, currentOffset);
         }
     }
@@ -201,21 +202,6 @@ public void createHologram(String id, String type, Location location, Player tar
         }
     }
     
-    private String getStatName(String type) {
-        switch (type.toLowerCase()) {
-            case "deaths":
-                return "Deaths";
-            case "kills":
-                return "Kills";
-            case "kd":
-                return "K/D";
-            case "killstreak":
-                return "Killstreak";
-            default:
-                return "Stats";
-        }
-    }
-    
     public void updateAllHolograms() {
         for (String id : holograms.keySet()) {
             String type = getHologramType(id);
@@ -235,19 +221,18 @@ public void createHologram(String id, String type, Location location, Player tar
     }
     
     public void removeAllHolograms() {
-    for (Hologram hologram : holograms.values()) {
-        hologram.remove();
+        for (Hologram hologram : holograms.values()) {
+            hologram.remove();
+        }
+        holograms.clear();
+        
+        hologramsConfig.set("holograms", null);
+        try {
+            hologramsConfig.save(hologramsFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    holograms.clear();
-    
-    // Also clear the config
-    hologramsConfig.set("holograms", null);
-    try {
-        hologramsConfig.save(hologramsFile);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
     
     public Set<String> getHologramIds() {
         return new HashSet<>(holograms.keySet());
@@ -256,47 +241,4 @@ public void createHologram(String id, String type, Location location, Player tar
     public boolean hologramExists(String id) {
         return holograms.containsKey(id);
     }
-    public void clearLeftoverArmorStands() {
-    if (!hologramsConfig.contains("holograms")) return;
-    
-    for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
-        String path = "holograms." + id;
-        String worldName = hologramsConfig.getString(path + ".world");
-        double x = hologramsConfig.getDouble(path + ".x");
-        double y = hologramsConfig.getDouble(path + ".y");
-        double z = hologramsConfig.getDouble(path + ".z");
-        
-        org.bukkit.World world = plugin.getServer().getWorld(worldName);
-        if (world != null) {
-            Location location = new Location(world, x, y, z);
-            // Remove old armor stands in a 5 block radius
-            world.getNearbyEntities(location, 5, 10, 5).forEach(entity -> {
-                if (entity instanceof org.bukkit.entity.ArmorStand && !entity.hasMetadata("NPC")) {
-                    entity.remove();
-                }
-            });
-        }
-    }
-}
-
-public void loadHologramsDelayed() {
-    if (!hologramsConfig.contains("holograms")) return;
-    
-    for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
-        String path = "holograms." + id;
-        String type = hologramsConfig.getString(path + ".type");
-        String worldName = hologramsConfig.getString(path + ".world");
-        double x = hologramsConfig.getDouble(path + ".x");
-        double y = hologramsConfig.getDouble(path + ".y");
-        double z = hologramsConfig.getDouble(path + ".z");
-        
-        org.bukkit.World world = plugin.getServer().getWorld(worldName);
-        if (world != null) {
-            Location location = new Location(world, x, y, z);
-            Hologram hologram = new Hologram(id, location);
-            holograms.put(id, hologram);
-            updateHologram(id, type, null);
-        }
-    }
-}
 }
