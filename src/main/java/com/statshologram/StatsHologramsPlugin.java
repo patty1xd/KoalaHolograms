@@ -13,7 +13,6 @@ public class StatsHologramsPlugin extends JavaPlugin {
     private HologramManager hologramManager;
     
     @Override
-    @Override
 public void onEnable() {
     instance = this;
     
