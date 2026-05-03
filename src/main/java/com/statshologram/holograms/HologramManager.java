@@ -27,7 +27,11 @@ public class HologramManager {
         loadHolograms();
     }
     
-    private void loadHolograms() {
+    public HologramManager(StatsHologramsPlugin plugin) {
+    this.plugin = plugin;
+    this.holograms = new HashMap<>();
+    this.kdFormat = new DecimalFormat("#.##");
+    
     hologramsFile = new File(plugin.getDataFolder(), "holograms.yml");
     if (!hologramsFile.exists()) {
         try {
@@ -37,8 +41,9 @@ public class HologramManager {
             e.printStackTrace();
         }
     }
-    
     hologramsConfig = YamlConfiguration.loadConfiguration(hologramsFile);
+    // Don't load here - will load delayed from plugin
+}
     
     // Load saved holograms
     if (hologramsConfig.contains("holograms")) {
@@ -252,4 +257,47 @@ public void createHologram(String id, String type, Location location, Player tar
     public boolean hologramExists(String id) {
         return holograms.containsKey(id);
     }
+    public void clearLeftoverArmorStands() {
+    if (!hologramsConfig.contains("holograms")) return;
+    
+    for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
+        String path = "holograms." + id;
+        String worldName = hologramsConfig.getString(path + ".world");
+        double x = hologramsConfig.getDouble(path + ".x");
+        double y = hologramsConfig.getDouble(path + ".y");
+        double z = hologramsConfig.getDouble(path + ".z");
+        
+        org.bukkit.World world = plugin.getServer().getWorld(worldName);
+        if (world != null) {
+            Location location = new Location(world, x, y, z);
+            // Remove old armor stands in a 5 block radius
+            world.getNearbyEntities(location, 5, 10, 5).forEach(entity -> {
+                if (entity instanceof org.bukkit.entity.ArmorStand && !entity.hasMetadata("NPC")) {
+                    entity.remove();
+                }
+            });
+        }
+    }
+}
+
+public void loadHologramsDelayed() {
+    if (!hologramsConfig.contains("holograms")) return;
+    
+    for (String id : hologramsConfig.getConfigurationSection("holograms").getKeys(false)) {
+        String path = "holograms." + id;
+        String type = hologramsConfig.getString(path + ".type");
+        String worldName = hologramsConfig.getString(path + ".world");
+        double x = hologramsConfig.getDouble(path + ".x");
+        double y = hologramsConfig.getDouble(path + ".y");
+        double z = hologramsConfig.getDouble(path + ".z");
+        
+        org.bukkit.World world = plugin.getServer().getWorld(worldName);
+        if (world != null) {
+            Location location = new Location(world, x, y, z);
+            Hologram hologram = new Hologram(id, location);
+            holograms.put(id, hologram);
+            updateHologram(id, type, null);
+        }
+    }
+}
 }
